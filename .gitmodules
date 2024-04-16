@@ -1,0 +1,30 @@
+[submodule "And64InlineHook"]
+	path = And64InlineHook
+	url = https://github.com/Rprop/And64InlineHook.git
+[submodule "curl-android"]
+	path = curl-android
+	url = https://github.com/vvb2060/curl-android.git
+[submodule "BoringSSL_Android"]
+	path = BoringSSL_Android
+	url = https://github.com/vvb2060/BoringSSL_Android.git
+[submodule "imgui"]
+	path = imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "json"]
+	path = json
+	url = https://github.com/nlohmann/json.git
+[submodule "KittyMemory"]
+	path = KittyMemory
+	url = https://github.com/MJx0/KittyMemory.git
+[submodule "oxorany"]
+	path = oxorany
+	url = https://github.com/llxiaoyuan/oxorany.git
+[submodule "substrate"]
+	path = substrate
+	url = https://github.com/jevinskie/substrate.git
+[submodule "xDL"]
+	path = xDL
+	url = https://github.com/hexhacking/xDL.git
+[submodule "zygisk-module-sample"]
+	path = zygisk-module-sample
+	url = https://github.com/topjohnwu/zygisk-module-sample.git
