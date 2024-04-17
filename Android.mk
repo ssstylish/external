@@ -3,7 +3,7 @@ LOCAL_PATH              := $(call my-dir)
 include $(LOCAL_PATH)/Sources.mk
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES         :=                   \
+LOCAL_SRC_FILES         :=               \
 	$(XDL_PATH)/xdl.c                    \
 	$(XDL_PATH)/xdl_util.c               \
 	$(XDL_PATH)/xdl_lzma.c               \
@@ -23,7 +23,7 @@ LOCAL_SRC_FILES         :=                   \
 	$(IMGUI_PATH)/imgui_widgets.cpp      \
 	$(IMGUI_IMPL)/imgui_impl_android.cpp \
 	$(IMGUI_IMPL)/imgui_impl_opengl3.cpp
-LOCAL_C_INCLUDES        :=                   \
+LOCAL_C_INCLUDES        :=               \
 	$(LOCAL_PATH)/\\\\\\$(IMGUI_PATH)    \
 	$(LOCAL_PATH)/\\\\\\$(IMGUI_IMPL)    \
 	$(LOCAL_PATH)/\\\\\\$(CYDIA_PATH)    \
@@ -35,13 +35,13 @@ LOCAL_C_INCLUDES        :=                   \
 	$(LOCAL_PATH)/\\$(JSON_PATH)/include \
 	$(LOCAL_PATH)/$(CYDIA_HDE64)/include
 	ifneq ($(TARGET_ARCH_ABI),arm64-v8a)
-LOCAL_SRC_FILES         +=                   \
+LOCAL_SRC_FILES         +=               \
 	$(CYDIA_PATH)/\\\\\\\\\\Debug.cpp    \
 	$(CYDIA_PATH)/\\\\\\\\\Hooker.cpp    \
 	$(CYDIA_HDE64)/\\\\\\\src/hde64.c    \
 	$(CYDIA_PATH)/\\\\PosixMemory.cpp
 	else
-LOCAL_SRC_FILES         +=                   \
+LOCAL_SRC_FILES         +=               \
 	$(RPROP_PATH)/And64InlineHook.cpp
 	endif
 LOCAL_MODULE            := external
