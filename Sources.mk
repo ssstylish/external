@@ -1,0 +1,11 @@
+JSON_PATH    := json
+IMGUI_PATH   := imgui
+CYDIA_PATH   := substrate
+MODULES_PATH := $(LOCAL_PATH)
+IMGUI_IMPL   := imgui/backends
+OXORANY_PATH := oxorany/source
+RPROP_PATH   := And64InlineHook
+CYDIA_HDE64  := substrate/hde64c
+XDL_PATH     := xDL/xdl/src/main/cpp
+KITTY_PATH   := KittyMemory/KittyMemory
+ZYGISK_PATH  := zygisk-module-sample/module/jni
