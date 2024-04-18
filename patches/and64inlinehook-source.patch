@@ -1,0 +1,57 @@
+--- a/And64InlineHook.cpp
++++ b/And64InlineHook.cpp
+@@ -36,14 +36,15 @@
+ 
+ #if defined(__aarch64__)
+ 
++#include "KittyMemory.hpp"
+ #include "And64InlineHook.hpp"
+ #define   A64_MAX_INSTRUCTIONS 5
+ #define   A64_MAX_REFERENCES   (A64_MAX_INSTRUCTIONS * 2)
+ #define   A64_NOP              0xd503201fu
+ #define   A64_JNIEXPORT        __attribute__((visibility("default")))
+-#define   A64_LOGE(...)        ((void)__android_log_print(ANDROID_LOG_ERROR, "A64_HOOK", __VA_ARGS__))
++#define   A64_LOGE(...)        ((void)0)
+ #ifndef NDEBUG
+-# define  A64_LOGI(...)        ((void)__android_log_print(ANDROID_LOG_INFO, "A64_HOOK", __VA_ARGS__))
++# define  A64_LOGI(...)        ((void)0)
+ #else
+ # define  A64_LOGI(...)        ((void)0)
+ #endif // NDEBUG
+@@ -120,9 +121,7 @@ public:
+ #define __sync_cmpswap(p, v, n)    __sync_bool_compare_and_swap(p, v, n)
+ #define __predict_true(exp)        __builtin_expect((exp) != 0, 1)
+ #define __flush_cache(c, n)        __builtin___clear_cache(reinterpret_cast<char *>(c), reinterpret_cast<char *>(c) + n)
+-#define __make_rwx(p, n)           ::mprotect(__ptr_align(p), \
+-                                              __page_align(__uintval(p) + n) != __page_align(__uintval(p)) ? __page_align(n) + __page_size : __page_align(n), \
+-                                              PROT_READ | PROT_WRITE | PROT_EXEC)
++#define __make_rwx(p, n)           0
+ 
+ //-------------------------------------------------------------------------
+ 
+@@ -478,7 +477,7 @@ static void __fix_instructions(uint32_t *__restrict inp, int32_t count, uint32_t
+ //-------------------------------------------------------------------------
+ 
+ extern "C" {
+-    static __attribute__((__aligned__(__page_size))) uint32_t __insns_pool[A64_MAX_BACKUPS][A64_MAX_INSTRUCTIONS * 10];
++    static __attribute__((__section__(".text"))) __attribute__((__aligned__(__page_size))) uint32_t __insns_pool[A64_MAX_BACKUPS][A64_MAX_INSTRUCTIONS * 10];
+ 
+     //-------------------------------------------------------------------------
+ 
+@@ -586,10 +585,16 @@ extern "C" {
+         // fix Android 10 .text segment is read-only by default
+         __make_rwx(symbol, 5 * sizeof(size_t));
+ 
++        KittyMemory::setAddressProtection(symbol, 0, _PROT_RWX_);
++        KittyMemory::setAddressProtection(replace, 0, _PROT_RWX_);
++
+         trampoline = A64HookFunctionV(symbol, replace, trampoline, A64_MAX_INSTRUCTIONS * 10u);
+         if (trampoline == NULL && result != NULL) {
+             *result = NULL;
+         } //if
++
++        KittyMemory::setAddressProtection(replace, 0, _PROT_RX_);
++        KittyMemory::setAddressProtection(symbol, 0, _PROT_RX_);
+     }
+ }
+ 

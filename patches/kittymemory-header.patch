@@ -1,0 +1,13 @@
+--- a/KittyMemory/KittyMemory.hpp
++++ b/KittyMemory/KittyMemory.hpp
+@@ -46,8 +46,8 @@
+ #define KITTY_LOGD(fmt, ...) do {} while(0)
+ #endif
+ 
+-#define KITTY_LOGI(fmt, ...) ((void)__android_log_print(ANDROID_LOG_INFO, KITTY_LOG_TAG, fmt,  ##__VA_ARGS__))
+-#define KITTY_LOGE(fmt, ...) ((void)__android_log_print(ANDROID_LOG_ERROR, KITTY_LOG_TAG, fmt, ##__VA_ARGS__))
++#define KITTY_LOGI(fmt, ...) ((void)0)
++#define KITTY_LOGE(fmt, ...) ((void)0)
+ 
+ #elif __APPLE__
+ #include <os/log.h>

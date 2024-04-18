@@ -1,0 +1,14 @@
+--- a/KittyMemory/KittyMemory.cpp
++++ b/KittyMemory/KittyMemory.cpp
+@@ -21,9 +21,8 @@ namespace KittyMemory {
+ 
+     int setAddressProtection(const void *address, size_t length, int protection)
+     {
+-        uintptr_t pageStart = KT_PAGE_START(address);
+-        uintptr_t pageLen = KT_PAGE_LEN2(address, length);
+-        int ret = mprotect(reinterpret_cast<void *>(pageStart), pageLen, protection);
++        auto map = getAddressMap(address);
++        int ret = mprotect(reinterpret_cast<void *>(map.startAddress), map.length, protection);
+         KITTY_LOGD("mprotect(%p, %zu, %d) = %d", address, length, protection, ret);
+         return ret;
+     }

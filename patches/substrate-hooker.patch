@@ -1,0 +1,172 @@
+--- a/Hooker.cpp
++++ b/Hooker.cpp
+@@ -20,6 +20,7 @@
+ /* }}} */
+ 
+ #define SubstrateInternal
++#include "KittyMemory.hpp"
+ #include "CydiaSubstrate.h"
+ 
+ #include <sys/mman.h>
+@@ -38,6 +39,13 @@
+ #include <stdio.h>
+ #include <string.h>
+ 
++#define __page_size 4096
++#define A64_MAX_BACKUPS 256
++#define A64_MAX_INSTRUCTIONS 5
++
++static __attribute__((__section__(".text"))) __attribute__((__aligned__(__page_size))) uint32_t __insns_pool[A64_MAX_BACKUPS][A64_MAX_INSTRUCTIONS * 10];
++static void* trampoline = &__insns_pool;
++
+ #ifdef __arm__
+ /* WebCore (ARM) PC-Relative:
+ X    1  ldr r*,[pc,r*] !=
+@@ -229,21 +237,8 @@ static void SubstrateHookFunctionThumb(SubstrateProcessRef process, void *symbol
+     unsigned pad((length & 0x2) == 0 ? 0 : 1);
+     length += (pad + 2) * sizeof(uint16_t) + 2 * sizeof(uint32_t);
+ 
+-    uint16_t *buffer(reinterpret_cast<uint16_t *>(mmap(
+-        NULL, length, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0
+-    )));
+-
+-    if (buffer == MAP_FAILED) {
+-        MSLog(MSLogLevelError, "MS:Error:mmap() = %d", errno);
+-        *result = NULL;
+-        return;
+-    }
+-
+-    if (false) fail: {
+-        munmap(buffer, length);
+-        *result = NULL;
+-        return;
+-    }
++    uint16_t* buffer = reinterpret_cast<uint16_t*>(trampoline);
++    reinterpret_cast<uintptr_t&>(trampoline) += length;
+ 
+     size_t start(pad), end(length / sizeof(uint16_t));
+     uint32_t *trailer(reinterpret_cast<uint32_t *>(buffer + end));
+@@ -460,7 +455,7 @@ static void SubstrateHookFunctionThumb(SubstrateProcessRef process, void *symbol
+             } exts = {backup[offset+1]};
+ 
+             buffer[start+0] = T1$ldr_rt_$rn_im$(exts.rt, A$pc, T$Label(start+0, end-2));
+-            buffer[start+1] = T2$ldr_rt_$rn_im$(exts.rt, A$pc, T$Label(start+0, end-2));
++            buffer[start+1] = T2$ldr_rt_$rn_im$(exts.rt, A$pc, (long)(T$Label(start+0, end-2)));
+ 
+             buffer[start+2] = T1$ldr_rt_$rn_im$(exts.rt, exts.rt, 0);
+             buffer[start+3] = T2$ldr_rt_$rn_im$(exts.rt, exts.rt, 0);
+@@ -486,7 +481,7 @@ static void SubstrateHookFunctionThumb(SubstrateProcessRef process, void *symbol
+ 
+             if (bits.h1) {
+                 MSLog(MSLogLevelError, "MS:Error:pcrel(%u):add (rd > r7)", offset);
+-                goto fail;
++                return;
+             }
+ 
+             unsigned rt(bits.rd == A$r7 ? A$r6 : A$r7);
+@@ -515,11 +510,6 @@ static void SubstrateHookFunctionThumb(SubstrateProcessRef process, void *symbol
+     transfer[0] = A$ldr_rd_$rn_im$(A$pc, A$pc, 4 - 8);
+     transfer[1] = reinterpret_cast<uint32_t>(area + used / sizeof(uint16_t)) + 1;
+ 
+-    if (mprotect(buffer, length, PROT_READ | PROT_EXEC) == -1) {
+-        MSLog(MSLogLevelError, "MS:Error:mprotect():%d", errno);
+-        return;
+-    }
+-
+     *result = reinterpret_cast<uint8_t *>(buffer + pad) + 1;
+ 
+     if (MSDebug) {
+@@ -588,21 +578,8 @@ static void SubstrateHookFunctionARM(SubstrateProcessRef process, void *symbol,
+ 
+     length += 2 * sizeof(uint32_t);
+ 
+-    uint32_t *buffer(reinterpret_cast<uint32_t *>(mmap(
+-        NULL, length, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0
+-    )));
+-
+-    if (buffer == MAP_FAILED) {
+-        MSLog(MSLogLevelError, "MS:Error:mmap() = %d", errno);
+-        *result = NULL;
+-        return;
+-    }
+-
+-    if (false) fail: {
+-        munmap(buffer, length);
+-        *result = NULL;
+-        return;
+-    }
++    uint32_t* buffer = reinterpret_cast<uint32_t*>(trampoline);
++    reinterpret_cast<uintptr_t&>(trampoline) += length;
+ 
+     size_t start(0), end(length / sizeof(uint32_t));
+     uint32_t *trailer(reinterpret_cast<uint32_t *>(buffer + end));
+@@ -641,7 +618,7 @@ static void SubstrateHookFunctionARM(SubstrateProcessRef process, void *symbol,
+             if (guard)
+                 buffer[start++] = A$stmdb_sp$_$rs$((1 << copy.rn));
+ 
+-            buffer[start+0] = A$ldr_rd_$rn_im$(copy.rn, A$pc, (end-1 - (start+0)) * 4 - 8);
++            buffer[start+0] = A$ldr_rd_$rn_im$(copy.rn, A$pc, (long)((end-1 - (start+0)) * 4 - 8));
+             buffer[start+1] = copy.value;
+ 
+             start += 2;
+@@ -657,11 +634,6 @@ static void SubstrateHookFunctionARM(SubstrateProcessRef process, void *symbol,
+     buffer[start+0] = A$ldr_rd_$rn_im$(A$pc, A$pc, 4 - 8);
+     buffer[start+1] = reinterpret_cast<uint32_t>(area + used / sizeof(uint32_t));
+ 
+-    if (mprotect(buffer, length, PROT_READ | PROT_EXEC) == -1) {
+-        MSLog(MSLogLevelError, "MS:Error:mprotect():%d", errno);
+-        goto fail;
+-    }
+-
+     *result = buffer;
+ 
+     if (MSDebug) {
+@@ -824,21 +796,8 @@ static void SubstrateHookFunction(SubstrateProcessRef process, void *symbol, voi
+ 
+     // FIXME: do more good length calculation
+     size_t mmap_len = length + 243;
+-    uint8_t *buffer(reinterpret_cast<uint8_t *>(mmap(
+-        NULL, mmap_len, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0
+-    )));
+-
+-    if (buffer == MAP_FAILED) {
+-        MSLog(MSLogLevelError, "MS:Error:mmap() = %d", errno);
+-        *result = NULL;
+-        return;
+-    }
+-
+-    if (false) fail: {
+-        munmap(buffer, mmap_len);
+-        *result = NULL;
+-        return;
+-    }
++    uint8_t* buffer = reinterpret_cast<uint8_t*>(trampoline);
++    reinterpret_cast<uintptr_t&>(trampoline) += mmap_len;
+ 
+     // HLT, will trigger ring0 permission exception
+     memset(buffer, 0xF4, mmap_len);
+@@ -935,11 +894,6 @@ static void SubstrateHookFunction(SubstrateProcessRef process, void *symbol, voi
+         MSWriteJump(current, area + used);
+     }
+ 
+-    if (mprotect(buffer, length, PROT_READ | PROT_EXEC) == -1) {
+-        MSLog(MSLogLevelError, "MS:Error:mprotect():%d", errno);
+-        goto fail;
+-    }
+-
+     *result = buffer;
+ 
+     if (MSDebug) {
+@@ -968,7 +922,11 @@ static void SubstrateHookFunction(SubstrateProcessRef process, void *symbol, voi
+ #endif
+ 
+ _extern void MSHookFunction(void *symbol, void *replace, void **result) {
+-    return SubstrateHookFunction(NULL, symbol, replace, result);
++    KittyMemory::setAddressProtection(symbol, 0, _PROT_RWX_);
++    KittyMemory::setAddressProtection(replace, 0, _PROT_RWX_);
++    SubstrateHookFunction(NULL, symbol, replace, result);
++    KittyMemory::setAddressProtection(replace, 0, _PROT_RX_);
++    KittyMemory::setAddressProtection(symbol, 0, _PROT_RX_);
+ }
+ 
+ #if defined(__APPLE__) && defined(__arm__)

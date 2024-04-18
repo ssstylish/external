@@ -1,0 +1,21 @@
+--- a/PosixMemory.cpp
++++ b/PosixMemory.cpp
+@@ -59,18 +59,10 @@ extern "C" SubstrateMemoryRef SubstrateMemoryCreate(SubstrateAllocatorRef alloca
+     size_t width(((reinterpret_cast<uintptr_t>(data) + size - 1) / page + 1) * page - base);
+     void *address(reinterpret_cast<void *>(base));
+ 
+-    if (mprotect(address, width, PROT_READ | PROT_WRITE | PROT_EXEC) == -1) {
+-        MSLog(MSLogLevelError, "MS:Error:mprotect() = %d", errno);
+-        return NULL;
+-    }
+-
+     return new __SubstrateMemory(address, width);
+ }
+ 
+ extern "C" void SubstrateMemoryRelease(SubstrateMemoryRef memory) {
+-    if (mprotect(memory->address_, memory->width_, PROT_READ | PROT_WRITE | PROT_EXEC) == -1)
+-        MSLog(MSLogLevelError, "MS:Error:mprotect() = %d", errno);
+-
+     __clear_cache(reinterpret_cast<char *>(memory->address_), reinterpret_cast<char *>(memory->address_) + memory->width_);
+ 
+     delete memory;

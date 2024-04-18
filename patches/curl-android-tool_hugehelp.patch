@@ -1,0 +1,24 @@
+--- a/src/tool_hugehelp.c.cvs
++++ b/src/tool_hugehelp.c.cvs
+@@ -23,9 +23,16 @@
+  ***************************************************************************/
+ 
+ #include "tool_setup.h"
++#ifndef HAVE_LIBZ
++/*
++ * NEVER EVER edit this manually, fix the mkhelp.pl script instead!
++ */
++#ifdef USE_MANUAL
+ #include "tool_hugehelp.h"
+-
+-void hugehelp(void)
+-{
+-  puts("This is a silly replacement for the actual file.");
+-}
++void hugehelp(void) {}
++#else /* !USE_MANUAL */
++/* built-in manual is disabled, blank function */
++#include "tool_hugehelp.h"
++void hugehelp(void) {}
++#endif /* USE_MANUAL */
++#endif /* HAVE_LIBZ */

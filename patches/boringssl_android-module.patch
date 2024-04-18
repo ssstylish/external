@@ -1,0 +1,18 @@
+--- a/boringssl/src/main/native/BoringSSL.mk
++++ b/boringssl/src/main/native/BoringSSL.mk
+@@ -3,6 +3,7 @@ LOCAL_PATH := $(call my-dir)
+ include $(LOCAL_PATH)/sources.mk
+ 
+ include $(CLEAR_VARS)
++LOCAL_STATIC_LIBRARIES  := libcxx
+ LOCAL_MODULE            := crypto_static
+ LOCAL_SRC_FILES         := $(crypto_sources)
+ ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+@@ -22,6 +23,7 @@ STATIC_LIBRARY_STRIP    := true
+ include $(BUILD_STATIC_LIBRARY)
+ 
+ include $(CLEAR_VARS)
++LOCAL_STATIC_LIBRARIES  := libcxx
+ LOCAL_MODULE            := ssl_static
+ LOCAL_SRC_FILES         := $(ssl_sources)
+ LOCAL_C_INCLUDES        := $(LOCAL_PATH)/src/include

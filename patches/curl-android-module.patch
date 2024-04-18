@@ -1,0 +1,8 @@
+--- a/curl/src/main/native/Android.mk
++++ b/curl/src/main/native/Android.mk
+@@ -89,4 +89,4 @@ LOCAL_CFLAGS            := -DHAVE_CONFIG_H
+ STATIC_LIBRARY_STRIP    := true
+ include $(BUILD_STATIC_LIBRARY)
+ 
+-$(call import-module,prefab/boringssl)
++#$(call import-module,prefab/boringssl)
