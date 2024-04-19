@@ -1,0 +1,11 @@
+--- a/CydiaSubstrate.h
++++ b/CydiaSubstrate.h
+@@ -44,7 +44,7 @@ extern "C" {
+     __attribute__((__unused__))
+ 
+ #define _extern \
+-    extern "C" __attribute__((__visibility__("default")))
++    extern "C" __attribute__((__visibility__("hidden")))
+ 
+ #ifdef __cplusplus
+ #define _default(value) = value
