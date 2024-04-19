@@ -9,8 +9,9 @@
  #define   A64_MAX_INSTRUCTIONS 5
  #define   A64_MAX_REFERENCES   (A64_MAX_INSTRUCTIONS * 2)
  #define   A64_NOP              0xd503201fu
- #define   A64_JNIEXPORT        __attribute__((visibility("default")))
+-#define   A64_JNIEXPORT        __attribute__((visibility("default")))
 -#define   A64_LOGE(...)        ((void)__android_log_print(ANDROID_LOG_ERROR, "A64_HOOK", __VA_ARGS__))
++#define   A64_JNIEXPORT        __attribute__((visibility("hidden")))
 +#define   A64_LOGE(...)        ((void)0)
  #ifndef NDEBUG
 -# define  A64_LOGI(...)        ((void)__android_log_print(ANDROID_LOG_INFO, "A64_HOOK", __VA_ARGS__))
@@ -38,7 +39,7 @@
  
      //-------------------------------------------------------------------------
  
-@@ -586,10 +585,16 @@ extern "C" {
+@@ -586,11 +585,17 @@ extern "C" {
          // fix Android 10 .text segment is read-only by default
          __make_rwx(symbol, 5 * sizeof(size_t));
  
@@ -55,3 +56,6 @@
      }
  }
  
+-#endif // defined(__aarch64__)
+\ No newline at end of file
++#endif // defined(__aarch64__)
