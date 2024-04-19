@@ -1,4 +1,4 @@
-LOCAL_PATH              := $(call my-dir)
+LOCAL_PATH := $(call my-dir)
 
 include $(LOCAL_PATH)/Sources.mk
 include $(CLEAR_VARS)
