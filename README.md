@@ -43,3 +43,28 @@ cd ../substrate
 git apply ../patches/substrate-hooker.patch
 git apply ../patches/substrate-posixmemory.patch
 git apply ../patches/substrate-buffer.patch
+```
+
+## Usage
+
+> Android.mk
+
+```
+LOCAL_PATH             := $(call my-dir)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE           := test
+LOCAL_SRC_FILES        := test.cpp
+LOCAL_STATIC_LIBRARIES := external
+include $(BUILD_SHARED_LIBRARY)
+
+include $(LOCAL_PATH)/external/Android.mk
+```
+
+> Application.mk
+```
+APP_ABI      := all
+APP_STL      := none
+APP_OPTIM    := release
+APP_PLATFORM := android-21
+```
