@@ -68,3 +68,11 @@ APP_STL      := none
 APP_OPTIM    := release
 APP_PLATFORM := android-21
 ```
+
+> test.cpp
+```cpp
+#include "curl/curl.h"
+#include "nlohmann/json.hpp"
+#include "imgui_impl_android.h"
+//etc...
+```
