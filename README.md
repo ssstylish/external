@@ -1,6 +1,6 @@
 # External
 
-**external** is the setup of libraries, modules, etc. for use as tools for hacking Android applications.
+**external** is a setup for hacking android applications.
 
 ## Features
 
@@ -50,7 +50,7 @@ git apply ../patches/substrate-buffer.patch
 > Android.mk
 
 ```
-LOCAL_PATH             := $(call my-dir)
+LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE           := test
