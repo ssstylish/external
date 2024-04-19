@@ -39,7 +39,7 @@
  
      //-------------------------------------------------------------------------
  
-@@ -586,11 +585,17 @@ extern "C" {
+@@ -586,10 +585,16 @@ extern "C" {
          // fix Android 10 .text segment is read-only by default
          __make_rwx(symbol, 5 * sizeof(size_t));
  
@@ -56,6 +56,3 @@
      }
  }
  
--#endif // defined(__aarch64__)
-\ No newline at end of file
-+#endif // defined(__aarch64__)
