@@ -40,6 +40,7 @@ git apply ../../patches/kittymemory-source.patch
 cd ../../And64InlineHook
 git apply ../patches/and64inlinehook-source.patch
 cd ../substrate
+git apply ../patches/substrate-cydiasubstrate.patch
 git apply ../patches/substrate-hooker.patch
 git apply ../patches/substrate-posixmemory.patch
 git apply ../patches/substrate-buffer.patch
