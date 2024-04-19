@@ -32,7 +32,7 @@ git mv version.h.in version.h
 cd ../../../../nghttp3/lib/includes/nghttp3
 git apply ../../../../../../../../../patches/curl-android-nghttp3ver.patch
 git mv version.h.in version.h
-cd ../../../../../../../../../BoringSSL_Android\boringssl\src\main\native
+cd ../../../../../../../../../BoringSSL_Android/boringssl/src/main/native
 git apply ../../../../../patches/boringssl_android-module.patch
 cd ../../../../../KittyMemory/KittyMemory
 git apply ../../patches/kittymemory-header.patch
