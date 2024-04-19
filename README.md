@@ -1,6 +1,6 @@
 # External
 
-**external** is a setup for hacking Android applications, including elements of rendering, Internet access and more.
+**external** includes elements of rendering, internet access, memory interaction, and more.
 
 ## Features
 
