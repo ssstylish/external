@@ -1,6 +1,6 @@
 # External
 
-**external** includes elements of rendering, internet access, memory interaction, and more.
+**external** includes elements of rendering, internet access and more.
 
 ## Features
 
