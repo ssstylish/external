@@ -17,7 +17,7 @@ git clone https://github.com/ssstylish/external.git
 cd external
 git submodule update --init --recursive
 cd zygisk-module-sample/module/jni/libcxx
-git checkout master
+git pull origin master
 cd ../../../../curl-android/curl/src/main/native
 git apply ../../../../../patches/curl-android-module.patch
 cd curl/src
@@ -37,7 +37,9 @@ git apply ../../../../../patches/boringssl_android-module.patch
 cd ../../../../../KittyMemory/KittyMemory
 git apply ../../patches/kittymemory-header.patch
 git apply ../../patches/kittymemory-source.patch
+cd ../../And64InlineHook
 git apply ../patches/and64inlinehook-source.patch
+cd ../substrate
 git apply ../patches/substrate-hooker.patch
 git apply ../patches/substrate-posixmemory.patch
 git apply ../patches/substrate-buffer.patch
